@@ -1,4 +1,5 @@
-# dairy_app
+# dairy_vue_ui
+>>>>>>> restruct structure
 
 > A Vue.js project
 
