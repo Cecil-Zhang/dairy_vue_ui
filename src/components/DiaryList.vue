@@ -24,6 +24,8 @@
 </template>
 
 <script>
+import api from '../api/api-config'
+
 export default {
   name: 'DiaryList',
   data () {
@@ -34,7 +36,7 @@ export default {
   },
   methods: {
     getDiaries () {
-      this.$axios.get('http://localhost:8000/diary/')
+      this.$axios.get(api.diary.list)
         .then(res => {
           this.diaries = res.data
         })

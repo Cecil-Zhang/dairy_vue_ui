@@ -10,7 +10,7 @@
           tag="article"
           class="mb-2">
           <p class="card-text">
-            {{d.content}}
+            {{ d.content }}
           </p>
           <b-button :to="'/diary'" variant="primary">Go back</b-button>
         </b-card>
@@ -20,6 +20,8 @@
 </template>
 
 <script>
+import api from '../api/api-config'
+
 export default {
   name: 'DiaryDetail',
   data () {
@@ -29,7 +31,7 @@ export default {
   },
   methods: {
     getDiary () {
-      this.$axios.get('http://localhost:8000/diary/' + this.$route.params.id)
+      this.$axios.get(api.diary.list + this.$route.params.id)
         .then(res => {
           this.d = res.data
         })

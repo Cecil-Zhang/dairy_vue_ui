@@ -33,6 +33,7 @@
 import 'bootstrap/dist/css/bootstrap.css'
 import datePicker from 'vue-bootstrap-datetimepicker'
 import 'pc-bootstrap4-datetimepicker/build/css/bootstrap-datetimepicker.css'
+import api from '../api/api-config'
 
 export default {
   name: 'DiaryWrite',
@@ -49,7 +50,7 @@ export default {
   },
   methods: {
     onSubmit (evt) {
-      this.$axios.post('http://localhost:8000/diary/', this.diary)
+      this.$axios.post(api.diary.list, this.diary)
         .then(res => {
           this.$router.replace('/diary/' + res.data.id)
         })
