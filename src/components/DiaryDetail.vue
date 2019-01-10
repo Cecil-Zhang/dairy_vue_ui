@@ -31,7 +31,7 @@ export default {
   },
   methods: {
     getDiary () {
-      this.$axios.get(api.diary.list + this.$route.params.id)
+      this.$axios.get(api.diary.list + this.$route.params.id + '/')
         .then(res => {
           this.d = res.data
         })

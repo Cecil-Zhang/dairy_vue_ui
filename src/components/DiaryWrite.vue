@@ -52,7 +52,7 @@ export default {
     onSubmit (evt) {
       this.$axios.post(api.diary.list, this.diary)
         .then(res => {
-          this.$router.replace('/diary/' + res.data.id)
+          this.$router.replace('/diary/' + res.data.id + '/')
         })
         .catch(function (error) {
           alert(error)
