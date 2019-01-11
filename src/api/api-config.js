@@ -1,7 +1,15 @@
 const HOST = '/api/v1'
-// const HOST = 'http://localhost:8000'
 
 const API = {
+  'user': {
+    'login': HOST + '/users/login/',
+
+    'logout': HOST + '/users/logout/',
+
+    'register': HOST + '/users/register/',
+
+    'info': HOST + '/users/info/'
+  },
   'diary': {
     'list': HOST + '/diary/',
 

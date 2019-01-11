@@ -2,13 +2,18 @@
   <b-container>
     <b-row>
       <b-col>
-        <b-list-group>
-          <template v-for="d in diaries">
-            <b-list-group-item v-bind:key="d.id">
-              <b-link :to="'/diary/' + d.id">{{d.datetime}}</b-link> {{d.weather}}
-            </b-list-group-item>
-          </template>
-        </b-list-group>
+        <div v-if="code == 0">
+          <b-list-group>
+            <template v-for="d in diaries">
+              <b-list-group-item v-bind:key="d.id">
+                <b-link :to="'/diary/' + d.id">{{d.datetime}}</b-link> {{d.weather}}
+              </b-list-group-item>
+            </template>
+          </b-list-group>
+        </div>
+        <div v-else>
+          <p>{{msg}}</p>
+        </div>
       </b-col>
     </b-row>
   </b-container>
@@ -31,14 +36,20 @@ export default {
   data () {
     return {
       msg: 'Welcome to Your Dairy App',
-      diaries: []
+      diaries: [],
+      code: 0
     }
   },
   methods: {
     getDiaries () {
       this.$axios.get(api.diary.list)
         .then(res => {
-          this.diaries = res.data
+          if (res.data.code === 404) {
+            this.code = res.data.code
+            this.msg = res.data.msg
+          } else {
+            this.diaries = res.data
+          }
         })
         .catch(function (error) {
           alert(error)
