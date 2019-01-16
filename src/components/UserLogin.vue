@@ -26,7 +26,6 @@
 <script>
 import 'bootstrap/dist/css/bootstrap.css'
 import api from '../api/api-config'
-import jQuery from 'jquery'
 
 export default {
   name: 'UserLogin',
@@ -52,18 +51,7 @@ export default {
       /* Reset our form values */
       this.user.username = ''
       this.user.password = ''
-    },
-    autoLoginIfSessionValid () {
-      var that = this
-      this.$axios.get(api.user.info)
-        .then(res => {
-          that.$store.commit('login', res.data)
-          this.$router.replace('/diary/')
-        })
     }
-  },
-  mounted () {
-    this.autoLoginIfSessionValid()
   }
 }
 </script>

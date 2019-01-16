@@ -4,7 +4,7 @@
       <b-col>
         <b-form @submit.prevent="onSubmit" @reset.prevent="onReset">
           <b-form-group label="Datetime:" label-for="datetime">
-            <date-picker v-model="diary.datetime" :config="options"></date-picker>
+            <datetime v-model="diary.datetime" input-id="datetime" type="datetime" :cols="10"></datetime>
           </b-form-group>
           <b-form-group label="Today's Weather" label-for="weather">
             <b-form-input id="weather"
@@ -25,15 +25,17 @@
           <b-button type="reset" variant="danger">Clear</b-button>
         </b-form>
       </b-col>
+      <b-col>
+        <font-awesome-icon icon="user-secret" />
+      </b-col>
     </b-row>
   </b-container>
 </template>
 
 <script>
 import 'bootstrap/dist/css/bootstrap.css'
-import datePicker from 'vue-bootstrap-datetimepicker'
-import 'pc-bootstrap4-datetimepicker/build/css/bootstrap-datetimepicker.css'
 import api from '../api/api-config'
+import { Datetime } from 'vue-datetime'
 
 export default {
   name: 'DiaryWrite',
@@ -65,7 +67,7 @@ export default {
     }
   },
   components: {
-    datePicker
+    datetime: Datetime
   }
 }
 </script>

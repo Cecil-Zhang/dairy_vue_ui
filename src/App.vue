@@ -8,6 +8,7 @@
 <script>
 import NavBar from '@/components/NavBar'
 import jQuery from 'jquery'
+import api from './api/api-config'
 
 export default {
   name: 'App',
@@ -20,7 +21,20 @@ export default {
     NavBar
   },
   created () {
+    this.autoLoginIfSessionValid()
     this.$axios.defaults.headers.common['X-CSRFToken'] = getCookie('csrftoken')
+  },
+  methods: {
+    autoLoginIfSessionValid () {
+      var that = this
+      this.$axios.get(api.user.info)
+        .then(res => {
+          that.$store.commit('login', res.data)
+        })
+        .catch(err => {
+          console.log('auto login failed due to' + err)
+        })
+    }
   }
 }
 
