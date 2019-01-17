@@ -1,15 +1,17 @@
 <template>
-  <b-container>
+  <b-container fluid>
     <b-row align-h="center">
       <b-col cols="10">
         <b-form>
           <b-form-group label="Datetime:" label-for="datetime" cols="5">
-              <datetime v-model="diary.datetime" input-id="datetime" type="datetime" input-class="w-100"></datetime>
+              <datetime v-model="diary.datetime" input-id="datetime" type="datetime"
+                        input-class="w-100" @change="modified=true"></datetime>
           </b-form-group>
           <b-form-group label="Today's Weather" label-for="weather">
             <b-form-input id="weather"
                           type="text"
                           v-model="diary.weather"
+                          @change="modified=true"
                           required
                           placeholder="How is the weather?">
             </b-form-input>
@@ -18,11 +20,10 @@
             <b-form-textarea id="content"
                          v-model="diary.content"
                          placeholder="I'm listening"
+                         @input="modified=true"
                          :rows="10">
             </b-form-textarea>
           </b-form-group>
-          <!-- <b-button type="submit" variant="primary">Submit</b-button> -->
-          <!-- <b-button type="reset" variant="danger">Clear</b-button> -->
         </b-form>
       </b-col>
     </b-row>
@@ -44,9 +45,21 @@
         </b-modal>
       </b-col>
     </b-row>
+    <b-row align-h="center">
+      <b-col cols="4">
+        <b-alert :show="dismissCountDown"
+             dismissible
+             dismissAfterSeconds
+             fade
+             variant="success"
+             @dismissed="dismissCountDown=0"
+             @dismiss-count-down="countDownChanged">
+          Auto save<span v-show="polling.res">d!</span><span v-show="!polling.res"> failed!</span>
+        </b-alert>
+      </b-col>
+    </b-row>
   </b-container>
 </template>
-
 <script>
 import 'bootstrap/dist/css/bootstrap.css'
 import api from '../api/api-config'
@@ -57,10 +70,58 @@ export default {
   data () {
     return {
       diary: {},
-      mode: 'create'
+      mode: 'create',
+      polling: {
+        id: '',
+        res: ''
+      },
+      modified: false,
+      dismissSecs: 2,
+      dismissCountDown: 0
     }
   },
   methods: {
+    changeModifed () {
+      this.modified = true
+    },
+    countDownChanged (dismissCountDown) {
+      this.dismissCountDown = dismissCountDown
+    },
+    showAlert () {
+      this.dismissCountDown = this.dismissSecs
+    },
+    pollData () {
+      var that = this
+      this.polling.id = setInterval(() => {
+        if (that.modified) {
+          if (!that.diary.id) {
+            that.$axios.post(api.diary.list, that.diary)
+              .then((res) => {
+                that.modified = false
+                that.polling.res = true
+                that.showAlert()
+              }).catch((err) => {
+                console.log(err)
+                that.showAlert()
+                that.polling.res = false
+                that.modified = true
+              })
+          } else {
+            that.$axios.put(api.diary.list + that.diary.id + '/', that.diary)
+              .then(res => {
+                that.modified = false
+                that.polling.res = true
+                that.showAlert()
+              }).catch((err) => {
+                console.log(err)
+                that.showAlert()
+                that.polling.res = false
+                that.modified = true
+              })
+          }
+        }
+      }, 300000)
+    },
     getDiary () {
       if (this.$route.params.id !== 'null') {
         this.$axios.get(api.diary.list + this.$route.params.id + '/')
@@ -111,6 +172,9 @@ export default {
   },
   created () {
     this.getDiary()
+  },
+  mounted () {
+    this.pollData()
   },
   components: {
     datetime: Datetime

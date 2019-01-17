@@ -1,10 +1,10 @@
 <template>
-  <b-container>
+  <b-container fluid>
     <b-row>
       <b-col>
         <div v-if="code == 0">
           <b-list-group>
-            <template v-for="d in diaries">
+            <template v-for="d in diaries.data">
               <b-list-group-item v-bind:key="d.id">
                 <b-link :to="'/diary/' + d.id" cols="3">{{d.datetime}}</b-link>
                 <span cols="3">{{d.weather}}</span>
@@ -17,16 +17,14 @@
         </div>
       </b-col>
     </b-row>
+    <b-row>
+      <b-col>
+        <div>
+          <b-pagination-nav base-url="/diary/page/" :number-of-pages="diaries.num_pages" v-model="currentPage"/>
+        </div>
+      </b-col>
+    </b-row>
   </b-container>
-  <!-- <div>
-    <h2>Your Diaries</h2>
-    <b-button>Write</b-button>
-    <ul>
-      <li v-for="d in diaries" v-bind:key="d.id">
-            <p>{{ d.datetime }}</p>
-      </li>
-    </ul>
-  </div> -->
 </template>
 
 <script>
@@ -37,14 +35,19 @@ export default {
   data () {
     return {
       msg: 'Welcome to Your Dairy App',
-      diaries: [],
+      diaries: {
+        data: [],
+        num_pages: 10
+      },
+      page_size: 10,
+      currentPage: 1,
       code: 0
     }
   },
   methods: {
     getDiaries () {
       var that = this
-      this.$axios.get(api.diary.list)
+      this.$axios.get(api.diary.list + '?page_size=' + this.page_size + '&page=' + this.currentPage)
         .then(res => {
           if (res.data.code === 404) {
             that.code = res.data.code
@@ -56,9 +59,15 @@ export default {
         .catch(function (error) {
           alert(error)
         })
+    },
+    linkGen (pageNum) {
+      return '#page/' + pageNum + '/foobar'
     }
   },
   created () {
+    if (this.$route.params.page) {
+      this.currentPage = parseInt(this.$route.params.page)
+    }
     this.getDiaries()
   }
 }

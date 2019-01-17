@@ -28,7 +28,7 @@ let router = new Router({
       component: UserRegister
     },
     {
-      path: '/diary',
+      path: '/diary/page/:page',
       name: 'DiaryList',
       component: DiaryList
     },

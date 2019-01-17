@@ -1,5 +1,5 @@
 <template>
-  <b-container>
+  <b-container fluid>
     <b-row align-h="center">
       <b-col cols="8">
         <b-form @submit.prevent="onSubmit" @reset.prevent="onReset">

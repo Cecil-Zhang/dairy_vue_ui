@@ -4,12 +4,12 @@
 
       <b-navbar-toggle target="nav_collapse"></b-navbar-toggle>
 
-      <b-navbar-brand :to="'/diary'">Dairy</b-navbar-brand>
+      <b-navbar-brand :to="'/diary/page/1'">Dairy</b-navbar-brand>
 
       <b-collapse is-nav id="nav_collapse">
 
         <b-navbar-nav>
-          <b-nav-item :to="'/diary'">Diary Home</b-nav-item>
+          <b-nav-item :to="'/diary/page/1'">Diary Home</b-nav-item>
           <b-nav-item :to="'/diary/write/null'">Write</b-nav-item>
         </b-navbar-nav>
 
