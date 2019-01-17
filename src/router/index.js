@@ -33,7 +33,7 @@ let router = new Router({
       component: DiaryList
     },
     {
-      path: '/diary/write',
+      path: '/diary/write/:id',
       name: 'DiaryWrite',
       component: DiaryWrite
     },
@@ -52,7 +52,12 @@ router.beforeEach((to, from, next) => {
   const loggedIn = store.getters.isLoggedIn
 
   if (authRequired && !loggedIn) {
-    next('/user/login')
+    store.dispatch('auto_login')
+      .then(() => {
+        next()
+      }, () => {
+        next('/user/login')
+      })
   } else {
     next()
   }

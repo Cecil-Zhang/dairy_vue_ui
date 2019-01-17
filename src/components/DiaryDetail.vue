@@ -12,7 +12,23 @@
           <p class="card-text">
             {{ d.content }}
           </p>
-          <b-button :to="'/diary'" variant="primary">Go back</b-button>
+          <div class="w-100">
+            <b-button-toolbar key-nav class="w-100" justify aria-label="Toolbar with button groups">
+              <b-button-group class="mx-1">
+                <b-btn>&laquo;</b-btn>
+              </b-button-group>
+              <b-button-group class="mx-1">
+                <b-btn :variant="'outline-success'" :to="'/diary/write/' + d.id">Edit</b-btn>
+                <b-btn :variant="'outline-danger'" v-b-modal.modal-delete>Delete</b-btn>
+              </b-button-group>
+              <b-button-group class="mx-1">
+                <b-btn>&raquo;</b-btn>
+              </b-button-group>
+            </b-button-toolbar>
+            <b-modal id="modal-delete" centered title="Delete" size="sm" @ok="deleteDiary">
+              <p class="my-4">Are you sure to delete this diary?</p>
+            </b-modal>
+          </div>
         </b-card>
       </b-col>
     </b-row>
@@ -34,6 +50,15 @@ export default {
       this.$axios.get(api.diary.list + this.$route.params.id + '/')
         .then(res => {
           this.d = res.data
+        })
+        .catch(function (error) {
+          alert(error)
+        })
+    },
+    deleteDiary () {
+      this.$axios.delete(api.diary.list + this.$route.params.id + '/')
+        .then(res => {
+          this.$router.push('/diary')
         })
         .catch(function (error) {
           alert(error)

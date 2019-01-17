@@ -6,7 +6,8 @@
           <b-list-group>
             <template v-for="d in diaries">
               <b-list-group-item v-bind:key="d.id">
-                <b-link :to="'/diary/' + d.id">{{d.datetime}}</b-link> {{d.weather}}
+                <b-link :to="'/diary/' + d.id" cols="3">{{d.datetime}}</b-link>
+                <span cols="3">{{d.weather}}</span>
               </b-list-group-item>
             </template>
           </b-list-group>
@@ -42,13 +43,14 @@ export default {
   },
   methods: {
     getDiaries () {
+      var that = this
       this.$axios.get(api.diary.list)
         .then(res => {
           if (res.data.code === 404) {
-            this.code = res.data.code
-            this.msg = res.data.msg
+            that.code = res.data.code
+            that.msg = res.data.msg
           } else {
-            this.diaries = res.data
+            that.diaries = res.data
           }
         })
         .catch(function (error) {
