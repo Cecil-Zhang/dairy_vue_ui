@@ -1,7 +1,7 @@
 <template>
   <div id="app">
-    <NavBar />
-    <router-view />
+    <NavBar :filters="filters" @searchPressed="onSearchPressed"/>
+    <router-view @show-filter-on-nav="onShowFilterOnNav" :searchCriteria="searchCriteria"/>
   </div>
 </template>
 
@@ -13,7 +13,17 @@ export default {
   name: 'App',
   data () {
     return {
-      user: {}
+      user: {},
+      filters: [], // pass to NavBar
+      searchCriteria: ''
+    }
+  },
+  methods: {
+    onShowFilterOnNav (filters) {
+      this.filters = filters
+    },
+    onSearchPressed (query) {
+      this.searchCriteria = query
     }
   },
   components: {

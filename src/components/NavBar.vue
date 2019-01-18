@@ -6,7 +6,7 @@
 
       <b-navbar-brand :to="'/diary/page/1'">Dairy</b-navbar-brand>
 
-      <b-collapse is-nav id="nav_collapse">
+      <b-collapse is-nav id="nav_collapse" v-model="showCollapse">
 
         <b-navbar-nav>
           <b-nav-item :to="'/diary/page/1'">Diary Home</b-nav-item>
@@ -17,8 +17,9 @@
         <b-navbar-nav class="ml-auto">
 
           <b-nav-form>
-            <b-form-input size="sm" class="mr-sm-2" type="text" placeholder="Search"/>
-            <b-button size="sm" class="my-2 my-sm-0" type="submit">Search</b-button>
+            <b-form-select v-for="f in filters" size="sm" :key="f.key" v-model="f.select" :options="f.options" class="mr-sm-2" />
+            <b-form-input size="sm" class="mr-sm-2" type="text" placeholder="Search" v-model="search"/>
+            <b-button size="sm" class="my-2 my-sm-0" @click="onSearchPressed">Search</b-button>
           </b-nav-form>
 
           <b-nav-item-dropdown right>
@@ -41,9 +42,20 @@ import api from '../api/api-config'
 
 export default {
   name: 'NavBar',
+  props: ['filters'],
+  /* passed from parent component
+  filters = [{
+      show: false,
+      options: [],
+      selected: null,
+      key: ''
+    }]
+  */
   data () {
     return {
-      user: {}
+      user: {},
+      search: '',
+      showCollapse: false
     }
   },
   methods: {
@@ -55,6 +67,14 @@ export default {
         .catch(function (error) {
           alert(error)
         })
+    },
+    onSearchPressed () {
+      var queryParams = 'search=' + this.search
+      this.filters.forEach(f => {
+        queryParams = queryParams + '&' + f.key + '=' + f.select
+      })
+      this.showCollapse = false
+      this.$emit('searchPressed', queryParams)
     }
   },
   computed: {

@@ -41,7 +41,7 @@ export default {
       this.$axios.post(api.user.login, this.user)
         .then(res => {
           that.$store.commit('login', res.data)
-          this.$router.replace('/diary/')
+          this.$router.replace({name: 'index'})
         })
         .catch(function (error) {
           alert(error)
