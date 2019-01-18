@@ -15,14 +15,14 @@
           <div class="w-100">
             <b-button-toolbar key-nav class="w-100" justify aria-label="Toolbar with button groups">
               <b-button-group class="mx-1">
-                <b-btn>&laquo;</b-btn>
+                <b-btn @click="lastDiary">&laquo;</b-btn>
               </b-button-group>
               <b-button-group class="mx-1">
                 <b-btn :variant="'outline-success'" :to="'/diary/write/' + d.id">Edit</b-btn>
                 <b-btn :variant="'outline-danger'" v-b-modal.modal-delete>Delete</b-btn>
               </b-button-group>
               <b-button-group class="mx-1">
-                <b-btn>&raquo;</b-btn>
+                <b-btn @click="nextDiary">&raquo;</b-btn>
               </b-button-group>
             </b-button-toolbar>
             <b-modal id="modal-delete" centered title="Delete" size="sm" @ok="deleteDiary">
@@ -30,6 +30,19 @@
             </b-modal>
           </div>
         </b-card>
+      </b-col>
+    </b-row>
+    <b-row align-h="center">
+      <b-col cols="4">
+        <b-alert :show="dismissCountDown"
+             dismissible
+             dismissAfterSeconds
+             fade
+             variant="info"
+             @dismissed="dismissCountDown=0"
+             @dismiss-count-down="countDownChanged">
+          Nothing more!
+        </b-alert>
       </b-col>
     </b-row>
   </b-container>
@@ -42,14 +55,45 @@ export default {
   name: 'DiaryDetail',
   data () {
     return {
-      d: {}
+      d: {},
+      dismissSecs: 2,
+      dismissCountDown: 0
     }
   },
   methods: {
-    getDiary () {
-      this.$axios.get(api.diary.list + this.$route.params.id + '/')
+    countDownChanged (dismissCountDown) {
+      this.dismissCountDown = dismissCountDown
+    },
+    getDiary (id = this.$route.params.id) {
+      this.$axios.get(api.diary.list + id + '/')
         .then(res => {
           this.d = res.data
+        })
+        .catch(function (error) {
+          alert(error)
+        })
+    },
+    lastDiary () {
+      this.$axios.get(api.diary.list + '?page_size=1&page=1&earlier_than=' + this.d.datetime)
+        .then(res => {
+          if (res.data.data.length > 0) {
+            this.$router.push('/diary/' + res.data.data[0].id)
+          } else {
+            this.dismissCountDown = this.dismissSecs
+          }
+        })
+        .catch(function (error) {
+          alert(error)
+        })
+    },
+    nextDiary () {
+      this.$axios.get(api.diary.list + '?order_by=datetime&page_size=1&page=1&later_than=' + this.d.datetime)
+        .then(res => {
+          if (res.data.data.length > 0) {
+            this.$router.push({name: 'DiaryDetail', params: {id: res.data.data[0].id}})
+          } else {
+            this.dismissCountDown = this.dismissSecs
+          }
         })
         .catch(function (error) {
           alert(error)
@@ -65,8 +109,14 @@ export default {
         })
     }
   },
-  created () {
-    this.getDiary()
+  beforeRouteEnter (to, from, next) {
+    next(vm => {
+      vm.getDiary()
+    })
+  },
+  beforeRouteUpdate (to, from, next) {
+    this.getDiary(to.params.id)
+    next()
   }
 }
 </script>
