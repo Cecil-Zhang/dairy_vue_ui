@@ -102,7 +102,7 @@ export default {
     deleteDiary () {
       this.$axios.delete(api.diary.list + this.$route.params.id + '/')
         .then(res => {
-          this.$router.push('/diary')
+          this.$router.push('/diary/page/1')
         })
         .catch(function (error) {
           alert(error)

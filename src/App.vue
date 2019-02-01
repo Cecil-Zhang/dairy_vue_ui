@@ -24,13 +24,18 @@ export default {
     },
     onSearchPressed (query) {
       this.searchCriteria = query
+    },
+    refreshCsrfToken () {
+      var csrftoken = getCookie('csrftoken')
+      console.log('get csrftoken=' + csrftoken)
+      this.$axios.defaults.headers.common['X-CSRFToken'] = csrftoken
     }
   },
   components: {
     NavBar
   },
   created () {
-    this.$axios.defaults.headers.common['X-CSRFToken'] = getCookie('csrftoken')
+    this.refreshCsrfToken()
   }
 }
 

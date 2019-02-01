@@ -40,6 +40,17 @@
     </b-row>
     <b-row>
       <b-col>
+        <b-form>
+          <b-form-group>
+            <b-form-file v-model="file" :state="Boolean(file)" placeholder="Choose a file..." multiple></b-form-file>
+            <div class="mt-3">Selected file: {{file && file.name}}</div>
+            <b-button variant="primary" @click="onSubmitPic">Submit</b-button>
+          </b-form-group>
+        </b-form>
+      </b-col>
+    </b-row>
+    <b-row>
+      <b-col>
         <b-modal id="modal-delete" centered title="Delete" size="sm" @ok="deleteDiary">
           <p class="my-4">Are you sure to delete this diary?</p>
         </b-modal>
@@ -75,6 +86,7 @@ export default {
         id: '',
         res: ''
       },
+      file: [],
       modified: false,
       dismissSecs: 2,
       dismissCountDown: 0
@@ -99,6 +111,7 @@ export default {
               .then((res) => {
                 that.modified = false
                 that.polling.res = true
+                that.diary.id = res.data.id
                 that.showAlert()
               }).catch((err) => {
                 console.log(err)
@@ -154,6 +167,21 @@ export default {
             alert(error)
           })
       }
+    },
+    onSubmitPic (evt) {
+      var fd = new FormData()
+      var f
+      for (f in this.file) {
+        fd.append('file[]', f)
+      }
+      fd.append('diary_id', 4)
+      this.$axios.post('/api/v1/diary/upload/', fd)
+        .then(res => {
+          console.log(res.data)
+        })
+        .catch(function (error) {
+          alert(error)
+        })
     },
     onReset (evt) {
       /* Reset our form values */
