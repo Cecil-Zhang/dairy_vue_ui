@@ -182,11 +182,12 @@ export default {
           fd.append('file', file)
         }
         fd.append('diary', this.diary.id)
+        var that = this
         return this.$axios.put(api.diary.upload, fd, {
           onUploadProgress: function (progressEvent) {
             var percents = parseInt(Math.round((progressEvent.loaded * 100) / progressEvent.total))
             this.uploadPercentage = percents
-          }
+          }.bind(that)
         }).then((res) => { this.fileModified = false })
       } else {
         return Promise.resolve()
