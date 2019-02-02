@@ -13,7 +13,9 @@ const API = {
   'diary': {
     'list': HOST + '/diary/',
 
-    'write': HOST + '/diary/write/'
+    'write': HOST + '/diary/write/',
+
+    'upload': '/api/v1/diary/upload/'
   }
 }
 

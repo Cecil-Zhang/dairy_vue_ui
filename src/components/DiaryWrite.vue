@@ -24,29 +24,23 @@
                          :rows="10">
             </b-form-textarea>
           </b-form-group>
+          <b-form-group>
+            <b-form-file v-model="file" :state="Boolean(file)" @change="fileModified = true" placeholder="Choose a file..." multiple></b-form-file>
+            <!-- <div class="mt-3">Selected file: {{file && file.name}}</div> -->
+          </b-form-group>
         </b-form>
       </b-col>
     </b-row>
     <b-row align-h="center">
       <b-col cols="4">
-        <b-button-toolbar key-nav aria-label="Toolbar with button groups">
+        <b-button-toolbar v-show="uploadPercentage === 0" key-nav aria-label="Toolbar with button groups">
           <b-button-group>
             <b-btn :variant="'outline-success'" @click="onSubmit">Submit</b-btn>
             <b-btn :variant="'outline-warning'" @click="onReset">Reset</b-btn>
             <b-btn :variant="'outline-danger'" v-b-modal.modal-delete>Delete</b-btn>
           </b-button-group>
         </b-button-toolbar>
-      </b-col>
-    </b-row>
-    <b-row>
-      <b-col>
-        <b-form>
-          <b-form-group>
-            <b-form-file v-model="file" :state="Boolean(file)" placeholder="Choose a file..." multiple></b-form-file>
-            <div class="mt-3">Selected file: {{file && file.name}}</div>
-            <b-button variant="primary" @click="onSubmitPic">Submit</b-button>
-          </b-form-group>
-        </b-form>
+        <b-progress v-show="uploadPercentage > 0" :value="uploadPercentage" :max="100" :variant="'success'" show-value animated></b-progress>
       </b-col>
     </b-row>
     <b-row>
@@ -88,6 +82,8 @@ export default {
       },
       file: [],
       modified: false,
+      fileModified: false,
+      uploadPercentage: 0,
       dismissSecs: 2,
       dismissCountDown: 0
     }
@@ -133,6 +129,7 @@ export default {
               })
           }
         }
+        this._submitPic()
       }, 300000)
     },
     getDiary () {
@@ -142,6 +139,7 @@ export default {
             this.diary = res.data
             var dt = new Date(this.diary.datetime)
             this.diary.datetime = dt.toISOString()
+            this.file = this.diary.pictures
           })
           .catch(function (error) {
             alert(error)
@@ -153,7 +151,11 @@ export default {
       if (this.mode === 'edit') {
         this.$axios.put(api.diary.list + this.diary.id + '/', this.diary)
           .then(res => {
-            this.$router.push('/diary/' + res.data.id + '/')
+            this.diary = res.data
+            return this._submitPic()
+          })
+          .then(res => {
+            this.$router.push('/diary/' + this.diary.id + '/')
           })
           .catch(function (error) {
             alert(error)
@@ -161,27 +163,34 @@ export default {
       } else {
         this.$axios.post(api.diary.list, this.diary)
           .then(res => {
-            this.$router.push('/diary/' + res.data.id + '/')
+            this.diary = res.data
+            return this._submitPic()
+          })
+          .then(res => {
+            this.$router.push('/diary/' + this.diary.id + '/')
           })
           .catch(function (error) {
             alert(error)
           })
       }
     },
-    onSubmitPic (evt) {
-      var fd = new FormData()
-      var f
-      for (f in this.file) {
-        fd.append('file[]', f)
+    _submitPic () {
+      if (this.fileModified) {
+        var fd = new FormData()
+        for (var i = 0; i < this.file.length; i++) {
+          var file = this.file[i]
+          fd.append('file', file)
+        }
+        fd.append('diary', this.diary.id)
+        return this.$axios.put(api.diary.upload, fd, {
+          onUploadProgress: function (progressEvent) {
+            var percents = parseInt(Math.round((progressEvent.loaded * 100) / progressEvent.total))
+            this.uploadPercentage = percents
+          }
+        }).then((res) => { this.fileModified = false })
+      } else {
+        return Promise.resolve()
       }
-      fd.append('diary_id', 4)
-      this.$axios.post('/api/v1/diary/upload/', fd)
-        .then(res => {
-          console.log(res.data)
-        })
-        .catch(function (error) {
-          alert(error)
-        })
     },
     onReset (evt) {
       /* Reset our form values */

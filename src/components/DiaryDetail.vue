@@ -2,7 +2,22 @@
   <b-container fluid>
     <b-row>
       <b-col>
-        <b-card :title="d.datetime"
+        <b-carousel id="carousel1" v-if="d.pictures && d.pictures.length > 0"
+                style="text-shadow: 1px 1px 2px #333;"
+                controls
+                indicators
+                background="#ababab"
+                :interval="4000"
+                v-model="slide"
+                @sliding-start="onSlideStart"
+                @sliding-end="onSlideEnd">
+          <b-carousel-slide v-for="pic in d.pictures" :img-src="pic.file" :key="pic.id" :caption="d.datetime" :img-alt="d.datetime">
+            <p>
+              {{ d.content }}
+            </p>
+          </b-carousel-slide>
+        </b-carousel>
+        <b-card v-if="d.pictures && d.pictures.length === 0" :title="d.datetime"
           :sub-title="d.weather"
           img-src="https://picsum.photos/600/300/?random"
           img-alt="Image"
@@ -12,24 +27,28 @@
           <p class="card-text">
             {{ d.content }}
           </p>
-          <div class="w-100">
-            <b-button-toolbar key-nav class="w-100" justify aria-label="Toolbar with button groups">
-              <b-button-group class="mx-1">
-                <b-btn @click="lastDiary">&laquo;</b-btn>
-              </b-button-group>
-              <b-button-group class="mx-1">
-                <b-btn :variant="'outline-success'" :to="'/diary/write/' + d.id">Edit</b-btn>
-                <b-btn :variant="'outline-danger'" v-b-modal.modal-delete>Delete</b-btn>
-              </b-button-group>
-              <b-button-group class="mx-1">
-                <b-btn @click="nextDiary">&raquo;</b-btn>
-              </b-button-group>
-            </b-button-toolbar>
-            <b-modal id="modal-delete" centered title="Delete" size="sm" @ok="deleteDiary">
-              <p class="my-4">Are you sure to delete this diary?</p>
-            </b-modal>
-          </div>
         </b-card>
+      </b-col>
+    </b-row>
+    <b-row>
+      <b-col>
+        <div class="w-100">
+          <b-button-toolbar key-nav class="w-100" justify aria-label="Toolbar with button groups">
+            <b-button-group class="mx-1">
+              <b-btn @click="lastDiary">&laquo;</b-btn>
+            </b-button-group>
+            <b-button-group class="mx-1">
+              <b-btn :variant="'outline-success'" :to="'/diary/write/' + d.id">Edit</b-btn>
+              <b-btn :variant="'outline-danger'" v-b-modal.modal-delete>Delete</b-btn>
+            </b-button-group>
+            <b-button-group class="mx-1">
+              <b-btn @click="nextDiary">&raquo;</b-btn>
+            </b-button-group>
+          </b-button-toolbar>
+          <b-modal id="modal-delete" centered title="Delete" size="sm" @ok="deleteDiary">
+            <p class="my-4">Are you sure to delete this diary?</p>
+          </b-modal>
+        </div>
       </b-col>
     </b-row>
     <b-row align-h="center">
@@ -57,7 +76,9 @@ export default {
     return {
       d: {},
       dismissSecs: 2,
-      dismissCountDown: 0
+      dismissCountDown: 0,
+      slide: 0,
+      sliding: null
     }
   },
   methods: {
@@ -107,6 +128,12 @@ export default {
         .catch(function (error) {
           alert(error)
         })
+    },
+    onSlideStart (slide) {
+      this.sliding = true
+    },
+    onSlideEnd (slide) {
+      this.sliding = false
     }
   },
   beforeRouteEnter (to, from, next) {
@@ -136,5 +163,8 @@ li {
 }
 a {
   color: #42b983;
+}
+p {
+  color: black;
 }
 </style>
