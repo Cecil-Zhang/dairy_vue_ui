@@ -27,7 +27,7 @@
             <template slot="button-content">
               <em>{{ login_user }}</em>
             </template>
-            <b-dropdown-item-button disabled>Profile</b-dropdown-item-button>
+            <b-dropdown-item-button @click="goSettings">Profile</b-dropdown-item-button>
             <b-dropdown-item-button @click.prevent="onSignout">Signout</b-dropdown-item-button>
           </b-nav-item-dropdown>
         </b-navbar-nav>
@@ -67,6 +67,9 @@ export default {
         .catch(function (error) {
           alert(error)
         })
+    },
+    goSettings () {
+      this.$router.push('/user/settings')
     },
     onSearchPressed () {
       var queryParams = 'search=' + this.search

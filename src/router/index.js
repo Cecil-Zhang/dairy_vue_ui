@@ -6,6 +6,7 @@ import DiaryDetail from '@/components/DiaryDetail'
 import DiaryWrite from '@/components/DiaryWrite'
 import UserLogin from '@/components/UserLogin'
 import UserRegister from '@/components/UserRegister'
+import Settings from '@/components/Settings'
 
 Vue.use(Router)
 
@@ -26,6 +27,11 @@ let router = new Router({
       path: '/user/register',
       name: 'UserRegister',
       component: UserRegister
+    },
+    {
+      path: '/user/settings',
+      name: 'Settings',
+      component: Settings
     },
     {
       path: '/diary/page/:page',

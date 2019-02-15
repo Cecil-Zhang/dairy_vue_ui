@@ -8,7 +8,9 @@ const API = {
 
     'register': HOST + '/users/register/',
 
-    'info': HOST + '/users/info/'
+    'info': HOST + '/users/info/',
+
+    'changePWD': HOST + '/users/changePassword/'
   },
   'diary': {
     'list': HOST + '/diary/',

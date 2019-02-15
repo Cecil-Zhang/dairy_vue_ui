@@ -1,7 +1,7 @@
 <template>
   <b-container fluid>
     <b-row align-h="center" align-v="center">
-      <b-col cols="8">
+      <b-col cols="8" md="6" lg="5" xl="5">
         <b-form @submit.prevent="onSubmit">
           <b-form-group label="Username" label-for="username" horizontal>
             <b-form-input id="username"
