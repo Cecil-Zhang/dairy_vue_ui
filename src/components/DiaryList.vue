@@ -1,26 +1,26 @@
 <template>
   <b-container fluid>
-    <b-row>
-      <b-col>
-        <div v-if="msg === ''">
-          <b-list-group>
-            <template v-for="d in diaries.data">
-              <b-list-group-item v-bind:key="d.id">
-                <b-link :to="'/diary/' + d.id" cols="3">{{d.datetime}}</b-link>
-                <span cols="3">{{d.weather}}</span>
-              </b-list-group-item>
-            </template>
-          </b-list-group>
-        </div>
-        <div v-else>
-          <p>{{msg}}</p>
-        </div>
+    <b-row align-h="center" v-if="msg === ''">
+      <b-col cols="6" sm="4" v-for="d in diaries.data" v-bind:key="d.id">
+          <b-card :title="formatDate(d.datetime)" class="marginful"
+                  :sub-title="d.weather">
+              <p class="card-text text-truncate">
+                  {{ d.content }}
+              </p>
+              <font-awesome-icon v-if="d.pictures.length > 0" icon="images" />
+              <b-link :to="'/diary/' + d.id" class="card-link">Read More</b-link>
+          </b-card>
+      </b-col>
+    </b-row>
+    <b-row align-h="center" v-if="msg !== ''">
+      <b-col cols="4">
+        <p>{{msg}}</p>
       </b-col>
     </b-row>
     <b-row>
       <b-col>
-        <div>
-          <b-pagination-nav base-url="/diary/page/" :number-of-pages="diaries.num_pages" v-model="currentPage"/>
+        <div class="marginful">
+          <b-pagination-nav align="center" base-url="/diary/page/" :number-of-pages="diaries.num_pages" v-model="currentPage"/>
         </div>
       </b-col>
     </b-row>
@@ -55,7 +55,7 @@ export default {
         num_pages: 10,
         years: []
       },
-      page_size: 10,
+      page_size: 12,
       currentPage: 1,
       filters: [
         {
@@ -88,6 +88,11 @@ export default {
     }
   },
   methods: {
+    formatDate (date) {
+      var dt = new Date(date)
+      var str = dt.toLocaleString('zh-CN', {hour12: false})
+      return str.substring(0, str.lastIndexOf(':'))
+    },
     getDiaries (searchCriteria) {
       if (!searchCriteria) {
         searchCriteria = ''
@@ -143,5 +148,8 @@ li {
 }
 a {
   color: #42b983;
+}
+.marginful {
+  margin: 1em auto 0.5em auto;
 }
 </style>

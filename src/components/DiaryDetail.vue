@@ -1,7 +1,16 @@
 <template>
-  <b-container fluid>
-    <b-row>
-      <b-col>
+  <b-container>
+    <b-row align-h="center">
+      <b-col sm="11" cols="11" xl="8" lg="8">
+        <h3 class="text-info">{{d.datetime}}</h3>
+        <span class="text-muted font-italic">{{d.weather}}</span>
+        <p class="diary text-left">
+          {{ d.content }}
+        </p>
+      </b-col>
+    </b-row>
+    <b-row align-h="center">
+      <b-col sm="11" cols="11" xl="8" lg="8">
         <b-carousel id="carousel1" v-if="d.pictures && d.pictures.length > 0"
                 style="text-shadow: 1px 1px 2px #333;"
                 controls
@@ -11,28 +20,22 @@
                 v-model="slide"
                 @sliding-start="onSlideStart"
                 @sliding-end="onSlideEnd">
-          <b-carousel-slide v-for="pic in d.pictures" :img-src="pic.file" :key="pic.id" :caption="d.datetime" :img-alt="d.datetime">
-            <p>
-              {{ d.content }}
-            </p>
+          <b-carousel-slide v-for="pic in d.pictures" :img-src="pic.file" :key="pic.id" :img-alt="d.datetime">
           </b-carousel-slide>
         </b-carousel>
-        <b-card v-if="d.pictures && d.pictures.length === 0" :title="d.datetime"
-          :sub-title="d.weather"
+        <b-card v-if="d.pictures && d.pictures.length === 0"
           img-src="https://picsum.photos/600/300/?random"
           img-alt="Image"
           img-top
+          overlay
           tag="article"
           class="mb-2">
-          <p class="card-text">
-            {{ d.content }}
-          </p>
         </b-card>
       </b-col>
     </b-row>
-    <b-row>
-      <b-col>
-        <div class="w-100">
+    <b-row align-h="center">
+      <b-col sm="11" cols="11" xl="8" lg="8">
+        <div class="w-100 marginful">
           <b-button-toolbar key-nav class="w-100" justify aria-label="Toolbar with button groups">
             <b-button-group class="mx-1">
               <b-btn @click="lastDiary">&laquo;</b-btn>
@@ -150,9 +153,6 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-h1, h2 {
-  font-weight: normal;
-}
 ul {
   list-style-type: none;
   padding: 0;
@@ -166,5 +166,11 @@ a {
 }
 p {
   color: black;
+}
+.marginful {
+  margin: 1em auto 1em auto;
+}
+.diary {
+  text-indent: 2rem;
 }
 </style>

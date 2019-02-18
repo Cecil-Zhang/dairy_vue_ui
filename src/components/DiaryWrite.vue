@@ -1,5 +1,5 @@
 <template>
-  <b-container fluid>
+  <b-container>
     <b-row align-h="center">
       <b-col cols="10">
         <b-form>
@@ -25,21 +25,47 @@
             </b-form-textarea>
           </b-form-group>
           <b-form-group>
-            <b-form-file v-model="file" :state="Boolean(file)" @change="fileModified = true" placeholder="Choose a file..." multiple></b-form-file>
+            <b-form-file v-model="file" accept="image/*" :state="Boolean(file)" @change="fileModified = true" placeholder="Choose a file..." multiple></b-form-file>
             <!-- <div class="mt-3">Selected file: {{file && file.name}}</div> -->
           </b-form-group>
         </b-form>
       </b-col>
     </b-row>
+    <b-row align-h="center" v-if="file.length > 0">
+      <b-col cols="10">
+        <b-btn @click="showCollapse = !showCollapse"
+               :class="showCollapse ? 'collapsed' : null"
+               aria-controls="collapse4"
+               :aria-expanded="showCollapse ? 'true' : 'false'">
+          Toggle Pictures
+        </b-btn>
+        <b-collapse class="mt-2" v-model="showCollapse" id="collapse4">
+          <p class="text-warning">Click to delete pictures</p>
+          <b-card-group deck>
+            <b-card v-for="pic in diary.pictures" v-b-modal="'modalDelPic'" @click="pic_to_delete = pic.id" :img-src="pic.file" :key="pic.id" :img-alt="'image' + pic.id">
+            </b-card>
+          </b-card-group>
+        </b-collapse>
+        <b-modal id="modalDelPic" centered title="Delete Picture" size="sm" @ok="deletePictures">
+          <p class="my-4">Are you sure to delete picture {{pic_to_delete}}?</p>
+        </b-modal>
+      </b-col>
+    </b-row>
+    <b-row align-h="center">
+      <b-col cols="7" sm="6" md="4" lg="3">
+        <div>
+          <b-button-toolbar v-show="uploadPercentage === 0" key-nav aria-label="Toolbar with button groups" class="marginful">
+            <b-button-group>
+              <b-btn :variant="'outline-success'" @click="onSubmit">Submit</b-btn>
+              <b-btn :variant="'outline-warning'" @click="onReset">Reset</b-btn>
+              <b-btn :variant="'outline-danger'" v-b-modal.modal-delete>Delete</b-btn>
+            </b-button-group>
+          </b-button-toolbar>
+        </div>
+      </b-col>
+    </b-row>
     <b-row align-h="center">
       <b-col cols="4">
-        <b-button-toolbar v-show="uploadPercentage === 0" key-nav aria-label="Toolbar with button groups">
-          <b-button-group>
-            <b-btn :variant="'outline-success'" @click="onSubmit">Submit</b-btn>
-            <b-btn :variant="'outline-warning'" @click="onReset">Reset</b-btn>
-            <b-btn :variant="'outline-danger'" v-b-modal.modal-delete>Delete</b-btn>
-          </b-button-group>
-        </b-button-toolbar>
         <b-progress v-show="uploadPercentage > 0" :value="uploadPercentage" :max="100" :variant="'success'" show-value animated></b-progress>
       </b-col>
     </b-row>
@@ -80,6 +106,8 @@ export default {
         id: '',
         res: ''
       },
+      showCollapse: false,
+      pic_to_delete: undefined,
       file: [],
       modified: false,
       fileModified: false,
@@ -98,6 +126,11 @@ export default {
     showAlert () {
       this.dismissCountDown = this.dismissSecs
     },
+    _initDiary (diary) {
+      this.diary = diary
+      var dt = new Date(this.diary.datetime)
+      this.diary.datetime = dt.toISOString()
+    },
     pollData () {
       var that = this
       this.polling.id = setInterval(() => {
@@ -107,7 +140,7 @@ export default {
               .then((res) => {
                 that.modified = false
                 that.polling.res = true
-                that.diary.id = res.data.id
+                that._initDiary(res.data)
                 that.showAlert()
               }).catch((err) => {
                 console.log(err)
@@ -136,9 +169,7 @@ export default {
       if (this.$route.params.id !== 'null') {
         this.$axios.get(api.diary.list + this.$route.params.id + '/')
           .then(res => {
-            this.diary = res.data
-            var dt = new Date(this.diary.datetime)
-            this.diary.datetime = dt.toISOString()
+            this._initDiary(res.data)
             this.file = this.diary.pictures
           })
           .catch(function (error) {
@@ -148,10 +179,10 @@ export default {
       }
     },
     onSubmit (evt) {
-      if (this.mode === 'edit') {
+      if (this.mode === 'edit' || this.diary.id) {
         this.$axios.put(api.diary.list + this.diary.id + '/', this.diary)
           .then(res => {
-            this.diary = res.data
+            this._initDiary(res.data)
             return this._submitPic()
           })
           .then(res => {
@@ -163,7 +194,7 @@ export default {
       } else {
         this.$axios.post(api.diary.list, this.diary)
           .then(res => {
-            this.diary = res.data
+            this._initDiary(res.data)
             return this._submitPic()
           })
           .then(res => {
@@ -173,6 +204,19 @@ export default {
             alert(error)
           })
       }
+    },
+    deletePictures () {
+      var that = this
+      this.$axios.delete(api.diary.list + this.diary.id + '/files/' + this.pic_to_delete + '/')
+        .then(() => {
+          for (var i = 0; i < that.file.length; i++) {
+            if (that.file[i].id === that.pic_to_delete) {
+              that.file.splice(i, 1)
+              break
+            }
+          }
+          that.pic_to_delete = undefined
+        })
     },
     _submitPic () {
       if (this.fileModified) {
@@ -235,5 +279,8 @@ li {
 }
 a {
   color: #42b983;
+}
+.marginful {
+  margin: 1em auto 1em auto;
 }
 </style>

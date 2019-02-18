@@ -9,7 +9,7 @@ import axios from 'axios'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faUserSecret } from '@fortawesome/free-solid-svg-icons'
+import { faUserSecret, faImages } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import Datetime from 'vue-datetime'
 // You need a specific loader for CSS files
@@ -18,6 +18,7 @@ import 'vue-datetime/dist/vue-datetime.css'
 Vue.use(Datetime)
 
 library.add(faUserSecret)
+library.add(faImages)
 
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 
