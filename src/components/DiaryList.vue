@@ -4,7 +4,10 @@
       <b-col cols="6" sm="4" v-for="d in diaries.data" v-bind:key="d.id">
           <b-card :title="formatDate(d.datetime)" class="marginful"
                   :sub-title="d.weather">
-              <p class="card-text text-truncate">
+              <p v-if="d.title" class="card-text text-truncate">
+                  {{ d.title }}
+              </p>
+              <p v-if="!d.title" class="card-text text-truncate">
                   {{ d.content }}
               </p>
               <font-awesome-icon v-if="d.pictures.length > 0" icon="images" />
@@ -91,7 +94,7 @@ export default {
     formatDate (date) {
       var dt = new Date(date)
       var str = dt.toLocaleString('zh-CN', {hour12: false})
-      return str.substring(0, str.lastIndexOf(':'))
+      return str.substring(0, str.lastIndexOf(' '))
     },
     getDiaries (searchCriteria) {
       if (!searchCriteria) {

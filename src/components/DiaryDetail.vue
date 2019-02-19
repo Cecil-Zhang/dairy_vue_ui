@@ -2,8 +2,10 @@
   <b-container>
     <b-row align-h="center">
       <b-col sm="11" cols="11" xl="8" lg="8">
-        <h3 class="text-info">{{d.datetime}}</h3>
-        <span class="text-muted font-italic">{{d.weather}}</span>
+        <h5 v-if="!d.title" class="text-info">{{d.datetime}}</h5>
+        <h3 v-if="d.title" class="text-info">{{d.title}}</h3>
+        <span v-if="d.title" class="text-muted">{{d.datetime}}</span>
+        <span v-if="d.weather" class="text-muted">{{d.weather}}</span>
         <p class="diary text-left">
           {{ d.content }}
         </p>

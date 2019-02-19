@@ -7,12 +7,18 @@
               <datetime v-model="diary.datetime" input-id="datetime" type="datetime"
                         input-class="w-100" @change="modified=true"></datetime>
           </b-form-group>
+          <b-form-group label="Name a title" label-for="title">
+            <b-form-input id="title"
+                          type="text"
+                          v-model="diary.title"
+                          @change="modified=true">
+            </b-form-input>
+          </b-form-group>
           <b-form-group label="Today's Weather" label-for="weather">
             <b-form-input id="weather"
                           type="text"
                           v-model="diary.weather"
                           @change="modified=true"
-                          required
                           placeholder="How is the weather?">
             </b-form-input>
           </b-form-group>
