@@ -6,7 +6,7 @@
         <h3 v-if="d.title" class="text-info">{{d.title}}</h3>
         <span v-if="d.title" class="text-muted">{{d.datetime}} &nbsp;</span>
         <span v-if="d.weather" class="text-muted">{{d.weather}}</span>
-        <p class="diary text-left">
+        <p v-if="d.content" class="diary text-left">
           <template v-for="(line,index) in d.content.split('\n\n')">{{line}}<br :key="index" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</template>
         </p>
       </b-col>
