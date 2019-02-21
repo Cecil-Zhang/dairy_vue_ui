@@ -4,11 +4,32 @@
       <b-col sm="11" cols="11" xl="8" lg="8">
         <h5 v-if="!d.title" class="text-info">{{d.datetime}}</h5>
         <h3 v-if="d.title" class="text-info">{{d.title}}</h3>
-        <span v-if="d.title" class="text-muted">{{d.datetime}}</span>
+        <span v-if="d.title" class="text-muted">{{d.datetime}} &nbsp;</span>
         <span v-if="d.weather" class="text-muted">{{d.weather}}</span>
         <p class="diary text-left">
           {{ d.content }}
         </p>
+      </b-col>
+    </b-row>
+    <b-row align-h="center">
+      <b-col sm="11" cols="11" xl="8" lg="8">
+        <div class="w-100 marginful">
+          <b-button-toolbar key-nav class="w-100" justify aria-label="Toolbar with button groups">
+            <b-button-group class="mx-1">
+              <b-btn @click="lastDiary">&laquo;</b-btn>
+            </b-button-group>
+            <b-button-group class="mx-1">
+              <b-btn :variant="'outline-success'" :to="'/diary/write/' + d.id">Edit</b-btn>
+              <b-btn :variant="'outline-danger'" v-b-modal.modal-delete>Delete</b-btn>
+            </b-button-group>
+            <b-button-group class="mx-1">
+              <b-btn @click="nextDiary">&raquo;</b-btn>
+            </b-button-group>
+          </b-button-toolbar>
+          <b-modal id="modal-delete" centered title="Delete" size="sm" @ok="deleteDiary">
+            <p class="my-4">Are you sure to delete this diary?</p>
+          </b-modal>
+        </div>
       </b-col>
     </b-row>
     <b-row align-h="center">
@@ -33,27 +54,6 @@
           tag="article"
           class="mb-2">
         </b-card>
-      </b-col>
-    </b-row>
-    <b-row align-h="center">
-      <b-col sm="11" cols="11" xl="8" lg="8">
-        <div class="w-100 marginful">
-          <b-button-toolbar key-nav class="w-100" justify aria-label="Toolbar with button groups">
-            <b-button-group class="mx-1">
-              <b-btn @click="lastDiary">&laquo;</b-btn>
-            </b-button-group>
-            <b-button-group class="mx-1">
-              <b-btn :variant="'outline-success'" :to="'/diary/write/' + d.id">Edit</b-btn>
-              <b-btn :variant="'outline-danger'" v-b-modal.modal-delete>Delete</b-btn>
-            </b-button-group>
-            <b-button-group class="mx-1">
-              <b-btn @click="nextDiary">&raquo;</b-btn>
-            </b-button-group>
-          </b-button-toolbar>
-          <b-modal id="modal-delete" centered title="Delete" size="sm" @ok="deleteDiary">
-            <p class="my-4">Are you sure to delete this diary?</p>
-          </b-modal>
-        </div>
       </b-col>
     </b-row>
     <b-row align-h="center">

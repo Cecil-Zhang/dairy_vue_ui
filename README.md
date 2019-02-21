@@ -1,4 +1,7 @@
-# dairy_vue_ui
+# Dairy_App Frontend
+Python Diary Web App built on top of **Django** + **Vue** + **Bootstrap** + **MySQL** (Adaptive to Phone and Computer)
+
+See Django Backend [here](https://github.com/Cecil-Zhang/dairy_app)
 
 > A Vue.js project
 
@@ -22,3 +25,6 @@ For a detailed explanation on how things work, check out the [guide](http://vuej
 
 ## Deploy Setup
 > `scp -r dist/ ubuntu@kevin.fun:/home/ubuntu/git/dairy_vue_ui/`
+
+## Screenshots
+[Preview](https://github.com/Cecil-Zhang/dairy_vue_ui/tree/master/screenshots/)
