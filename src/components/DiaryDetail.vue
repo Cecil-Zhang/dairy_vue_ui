@@ -7,7 +7,7 @@
         <span v-if="d.title" class="text-muted">{{d.datetime}} &nbsp;</span>
         <span v-if="d.weather" class="text-muted">{{d.weather}}</span>
         <p class="diary text-left">
-          {{ d.content }}
+          <template v-for="(line,index) in d.content.split('\n\n')">{{line}}<br :key="index" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</template>
         </p>
       </b-col>
     </b-row>
